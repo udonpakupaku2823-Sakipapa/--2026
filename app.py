@@ -1,5 +1,6 @@
 
 import streamlit as st
+from streamlit as sst
 
 # import tkinter as tk
 # from tkinter import ttk
@@ -70,8 +71,8 @@ options=["京成杯","日経新春杯","フェアリーＳ", "シンザン記念
 v=st.StringVar()
 
 # 選択された値を表示する関数
-v=tk.StringVar()
-combobox  = ttk.Combobox(root,values=options,height=10,
+v=st.StringVar()
+combobox  = sst.Combobox(root,values=options,height=10,
 textvariable=v,font=("BIZ UDPゴシック",16,"bold"))
 combobox.bind('<<ComboboxSelected>>',select_combo)
 combobox.pack(padx=200, pady=50)
