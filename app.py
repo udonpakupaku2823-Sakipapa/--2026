@@ -1,9 +1,7 @@
 
-from PIL import Image
 import streamlit as st
 
-options = ["[2026年うま王収支表", 
-           "[新着]シルクロードＳ", "[新着]根岸Ｓ",
+options = ["[新着]シルクロードＳ", "[新着]根岸Ｓ",
            "0125アメリカジョッキーＣ", "0125プロキオンＳ", "0124小倉牝馬Ｓ",
            "0118京成杯", "0118日経新春杯",
            "0112シンザン記念", "0111フェアリーＳ",
@@ -16,7 +14,6 @@ enemy = st.selectbox("レースを選択してください", options)
 if enemy:
     # ファイル名を辞書で管理
     image_files = {
-        "2026年うま王収支表": "2026うま王収支表.png",
         "[新着]シルクロードＳ": "0201シルクロードS.png",
         "[新着]根岸Ｓ": "0201根岸S.png",        
         "0125アメリカジョッキーＣ": "0125アメリカジョッキーC.png",
@@ -30,10 +27,9 @@ if enemy:
         "0104京都金杯": "0104京都金杯.png",
     }
 
-    #filename = image_files.get(enemy)
-    filename = image_files.open(enemy)
+    filename = image_files.get(enemy)
 
     st.write(f"選択されたレース：{enemy}")
 
     # 画像表示
-    st.image(filename, width=1500)
+    st.image(filename, width=800)
