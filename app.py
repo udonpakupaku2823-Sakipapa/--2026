@@ -16,7 +16,7 @@ enemy = st.selectbox("レースを選択してください", options)
 if enemy:
     # ファイル名を辞書で管理
     image_files = {
-        "2026年うま王収支表": "02026うま王収支表.png",
+        "2026年うま王収支表": "2026うま王収支表.png",
         "[新着]シルクロードＳ": "0201シルクロードS.png",
         "[新着]根岸Ｓ": "0201根岸S.png",        
         "0125アメリカジョッキーＣ": "0125アメリカジョッキーC.png",
@@ -35,4 +35,4 @@ if enemy:
     st.write(f"選択されたレース：{enemy}")
 
     # 画像表示
-    st.image(filename, width=1500)
+    st.image(filename, width=800)
