@@ -1,5 +1,5 @@
 
-
+from PIL import Image
 import streamlit as st
 
 options = ["[2026年うま王収支表", 
@@ -30,7 +30,8 @@ if enemy:
         "0104京都金杯": "0104京都金杯.png",
     }
 
-    filename = image_files.get(enemy)
+    #filename = image_files.get(enemy)
+    filename = image_files.open(enemy)
 
     st.write(f"選択されたレース：{enemy}")
 
