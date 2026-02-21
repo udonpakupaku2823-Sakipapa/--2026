@@ -50,4 +50,4 @@ if enemy:
     st.write(f"選択されたレース：{enemy}")
 
     # 画像表示
-    st.image(filename, width=900)
+    st.image(filename, width=800)
