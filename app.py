@@ -31,49 +31,6 @@ db = firestore.client()
 
 st.title("うま王メンバーズチャット")
 
-# --- アクセスカウント機能追加 ---
-# カウンター用のドキュメント参照
-counter_ref = db.collection("stats").document("page_counter")
-
-# トランザクションを使って安全にカウントアップ
-@st.cache_data(ttl=60) # 頻繁な更新による負荷軽減
-def increment_counter():
-    doc = counter_ref.get()
-    if doc.exists:
-        count = doc.to_dict().get("count", 0) + 1
-        counter_ref.update({"count": count})
-    else:
-        counter_ref.set({"count": 1})
-        count = 1
-    return count
-
-# カウントを取得して表示
-current_count = increment_counter()
-st.sidebar.metric("本日のアクセス数", current_count)
-
-
-# ------------------------------
-
-# 入力欄の追加（※元のコードで定義が漏れていたため追加しました）
-user = st.text_input("名前")
-text = st.text_input("メッセージ")
-
-if st.button("送信"):
-    if user and text: # 空入力を防ぐ
-        db.collection("chat").add({
-            "user": user,
-            "text": text,
-            "time": datetime.datetime.now()
-        })
-        st.rerun() # 送信後即時反映
-
-# メッセージ表示
-st.subheader("チャットログ")
-messages = db.collection("chat").order_by("time").stream()
-for m in messages:
-    msg = m.to_dict()
-    st.write(f"{msg['time'].strftime('%H:%M:%S')} {msg['user']}：{msg['text']}")
-
 
 #---------------------------------------------------
 
