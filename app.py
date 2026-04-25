@@ -1,6 +1,80 @@
 
 import streamlit as st
 
+#---------------------------------------------------
+
+
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+
+# Firestore 認証情報を secrets.toml から読み込む
+cred = credentials.Certificate({
+    "type": st.secrets["firestore"]["type"],
+    "project_id": st.secrets["firestore"]["project_id"],
+    "private_key_id": st.secrets["firestore"]["private_key_id"],
+    "private_key": st.secrets["firestore"]["private_key"],
+    "client_email": st.secrets["firestore"]["client_email"],
+    "client_id": st.secrets["firestore"]["client_id"],
+    "auth_uri": st.secrets["firestore"]["auth_uri"],
+    "token_uri": st.secrets["firestore"]["token_uri"],
+    "auth_provider_x509_cert_url": st.secrets["firestore"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": st.secrets["firestore"]["client_x509_cert_url"]
+})
+
+# Firebase 初期化（複数回初期化されないように）
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
+
+# データベース接続
+db = firestore.client()
+
+st.title("うま王メンバーズチャット")
+
+# --- アクセスカウント機能追加 ---
+# カウンター用のドキュメント参照
+counter_ref = db.collection("stats").document("page_counter")
+
+# トランザクションを使って安全にカウントアップ
+@st.cache_data(ttl=60) # 頻繁な更新による負荷軽減
+def increment_counter():
+    doc = counter_ref.get()
+    if doc.exists:
+        count = doc.to_dict().get("count", 0) + 1
+        counter_ref.update({"count": count})
+    else:
+        counter_ref.set({"count": 1})
+        count = 1
+    return count
+
+# カウントを取得して表示
+current_count = increment_counter()
+st.sidebar.metric("本日のアクセス数", current_count)
+# ------------------------------
+
+# 入力欄の追加（※元のコードで定義が漏れていたため追加しました）
+user = st.text_input("名前")
+text = st.text_input("メッセージ")
+
+if st.button("送信"):
+    if user and text: # 空入力を防ぐ
+        db.collection("chat").add({
+            "user": user,
+            "text": text,
+            "time": datetime.datetime.now()
+        })
+        st.rerun() # 送信後即時反映
+
+# メッセージ表示
+st.subheader("チャットログ")
+messages = db.collection("chat").order_by("time").stream()
+for m in messages:
+    msg = m.to_dict()
+    st.write(f"{msg['time'].strftime('%H:%M:%S')} {msg['user']}：{msg['text']}")
+
+
+#---------------------------------------------------
+
 options = ["2026年うま王収支表（単勝）","2026年うま王収支表（馬連）","2026年うま王収支表（三連複）",
            "[新着]フローラＳ","[新着]マイラーズＣ",
            "0425青葉賞",
