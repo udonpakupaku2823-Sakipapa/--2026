@@ -1,15 +1,30 @@
 
 import streamlit as st
 
-from google.cloud import firestore
-import datetime
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 
-from google.cloud import firestore
-import datetime
+# Firestore 認証情報を secrets.toml から読み込む
+cred = credentials.Certificate({
+    "type": st.secrets["firestore"]["type"],
+    "project_id": st.secrets["firestore"]["project_id"],
+    "private_key_id": st.secrets["firestore"]["private_key_id"],
+    "private_key": st.secrets["firestore"]["private_key"],
+    "client_email": st.secrets["firestore"]["client_email"],
+    "client_id": st.secrets["firestore"]["client_id"],
+    "auth_uri": st.secrets["firestore"]["auth_uri"],
+    "token_uri": st.secrets["firestore"]["token_uri"],
+    "auth_provider_x509_cert_url": st.secrets["firestore"]["auth_provider_x509_cert_url"],
+    "client_x509_cert_url": st.secrets["firestore"]["client_x509_cert_url"]
+})
+
+# Firebase 初期化（複数回初期化されないように）
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
 
 # データベース接続
-db = firestore.Client()
+db = firestore.client()
 
 st.title("うま王メンバーズチャット")
 
